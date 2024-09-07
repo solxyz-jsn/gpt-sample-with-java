@@ -32,11 +32,11 @@ IntelliJの場合は画面右端に`maven`タブがあります。これをク�
 
 ### Open AIのアクセスキーの設定
 
-```java
-    private static final String OPENAI_API_KEY = "あなたのアクセスキー";
-```
+実行時の環境変数にアクセスキーを設定します。
 
-※本ドキュメントは動作サンプルとしてコード内にキーを入力しますが、アプリケーションとして開発する場合はpropertiesファイルや環境変数から取得するようにしてください。
+```env
+OPENAI_API_KEY=あなたのアクセスキー
+```
 
 ## 実行方法
 
@@ -80,10 +80,45 @@ Embeddingsを行うことで、外部データを扱うことが容易になり�
     Embeddings embeddings = client.getEmbeddings("text-embedding-ada-002", embeddingsOptions);
 ```
 
-EmbeddingsはCompletetionモデル（ChatGPT系のモデル）では行えないため、Embeddings専用のモデル（`text-embedding-ada-002`）を使用しています。
+EmbeddingsはCompletionモデル（ChatGPT系のモデル）では行えないため、Embeddings専用のモデル（`text-embedding-ada-002`）を使用しています。
 
 プログラムを実行すると、ベクトル化した結果が表示されます。
 
 ![Embeddings実行結果](./images/embeddings01.png)
 
 ※PythonやJavaScriptではAPIコールから類似度検索までを自動で行ってくれるフレームワークがありますが、Javaでは広く使用されているOSSは存在しません。そのため、ベクトル化部分をAPIコールで行い、ベクトル化したものの保存や類似度検索を自前で実装する必要があります。
+
+### Azure OpenAI　APIの利用
+
+[AzureOpenAIExample.java](src/main/java/jp/co/solxyz/AzureOpenAIExample.java)
+
+AzureのOpenAI APIを利用して回答を取得します。
+
+実行時の環境変数にAzure OpenAIモデルのURLを設定します。
+
+```env
+OPEN_AI_URL=https://xxx.openai.azure.com
+```
+
+実行前にAzureにログインを行います。
+
+Azure CLIが必要になるので、次のように実行します。
+
+```PowerShell
+winget install -e --id Microsoft.AzureCLI
+```
+
+Azureにログインします。
+
+```PowerShell
+az login
+```
+
+AzureOpenAIExampleを実行します。
+
+SimpleQueryと同様の結果が得られます。
+
+```shell
+prompt: your name?
+message: I am an AI language model developed by OpenAI, so I don't have a personal name. You can simply call me OpenAI Assistant. How can I assist you today?
+```
