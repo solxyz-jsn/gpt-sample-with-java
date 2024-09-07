@@ -5,35 +5,31 @@ import com.azure.ai.openai.OpenAIClientBuilder;
 import com.azure.ai.openai.models.EmbeddingItem;
 import com.azure.ai.openai.models.Embeddings;
 import com.azure.ai.openai.models.EmbeddingsOptions;
-import com.azure.ai.openai.models.NonAzureOpenAIKeyCredential;
+import com.azure.core.credential.KeyCredential;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Embeddingsの例
  */
 public class EmbeddingsSample {
 
-    /**
-     * OpenAIのAPIキー
-     */
-    private static final String OPENAI_API_KEY = "あなたのアクセスキー";
-
     public static void main(String[] args) {
+        String key = System.getenv("OPENAI_API_KEY");
         // OpenAIクライアントの生成
         OpenAIClient client = new OpenAIClientBuilder()
-                .credential(new NonAzureOpenAIKeyCredential(OPENAI_API_KEY))
+                .credential(new KeyCredential(key))
                 .buildClient();
 
         // Embeddings対象のテキストを用意
         EmbeddingsOptions embeddingsOptions = new EmbeddingsOptions(
-                Arrays.asList("Hello World"));
+                List.of("Hello World"));
 
         // モデルを指定してEmbeddingsを行う
         Embeddings embeddings = client.getEmbeddings("text-embedding-ada-002", embeddingsOptions);
 
         for (EmbeddingItem item : embeddings.getData()) {
-            for (Double embedding : item.getEmbedding()) {
+            for (Float embedding : item.getEmbedding()) {
                 System.out.printf("%f;", embedding);
             }
         }
