@@ -94,7 +94,7 @@ EmbeddingsはCompletionモデル（ChatGPT系のモデル）では行えない�
 
 AzureのOpenAI APIを利用して回答を取得します。
 
-実行時の環境変数にAzure Open AIモデルのURLを設定します。
+実行時の環境変数にAzure OpenAIモデルのURLを設定します。
 
 ```env
 OPEN_AI_URL=https://xxx.openai.azure.com
