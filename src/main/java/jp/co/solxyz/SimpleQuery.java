@@ -2,7 +2,13 @@ package jp.co.solxyz;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;
-import com.azure.ai.openai.models.*;
+import com.azure.ai.openai.models.ChatChoice;
+import com.azure.ai.openai.models.ChatCompletions;
+import com.azure.ai.openai.models.ChatCompletionsOptions;
+import com.azure.ai.openai.models.ChatRequestMessage;
+import com.azure.ai.openai.models.ChatRequestUserMessage;
+import com.azure.ai.openai.models.ChatResponseMessage;
+import com.azure.core.credential.KeyCredential;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,36 +19,31 @@ import java.util.List;
 public class SimpleQuery {
 
     /**
-     * OpenAIのAPIキー
-     */
-    private static final String OPENAI_API_KEY = "あなたのアクセスキー";
-
-    /**
      * OpenAI APIへ送信するプロンプト
      */
     private static final String PROMPT = "your name?";
 
     public static void main(String[] args) {
-        // OpenAI APIクライアントの作成
+        String key = System.getenv("OPENAI_API_KEY");
+        // 1. OpenAI APIクライアントの作成
         OpenAIClient client = new OpenAIClientBuilder()
-                .credential(new NonAzureOpenAIKeyCredential(OPENAI_API_KEY))
+                .credential(new KeyCredential(key))
                 .buildClient();
 
-        // APIに送る会話情報を設定
-        List<ChatMessage> chatMessages = new ArrayList<>();
-        ChatMessage chat = new ChatMessage(ChatRole.USER);
-        chat.setContent(PROMPT);
+        // 2. APIに送る会話情報を設定
+        List<ChatRequestMessage> chatMessages = new ArrayList<>();
+        ChatRequestMessage chat = new ChatRequestUserMessage(PROMPT);
         chatMessages.add(chat);
 
         System.out.println("prompt: "+PROMPT);
 
-        // モデルを指定してAPIコール
-        ChatCompletions chatCompletions = client.getChatCompletions("gpt-3.5-turbo",
+        // 3. モデルを指定してAPIコール
+        ChatCompletions chatCompletions = client.getChatCompletions("gpt-4o-mini",
                 new ChatCompletionsOptions(chatMessages));
 
-        // レスポンスの表示
+        // 4. レスポンスの表示
         for (ChatChoice choice : chatCompletions.getChoices()) {
-            ChatMessage message = choice.getMessage();
+            ChatResponseMessage message = choice.getMessage();
             System.out.println("message: " + message.getContent());
         }
     }
